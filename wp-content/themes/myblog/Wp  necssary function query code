@@ -1,0 +1,1388 @@
+ওয়ার্ডপ্রেস প্রয়োজনীয় ফাংশনের তালিকা
+
+
+
+Root url for website
+---------------------------------------------------------
+<?php site_url(); ?>
+<?php bloginfo('url'); ?>
+ 
+title of specific post/page
+---------------------------------------------------------
+<?php wp_title(); ?>
+ Site Home URL
+---------------------------------------------------------
+<?php echo esc_url(home_url('/')); ?>
+Title of site
+---------------------------------------------------------
+<?php bloginfo('name'); ?>
+ 
+Site description
+---------------------------------------------------------
+<?php bloginfo('description'); ?>
+ 
+stylesheet folder location
+---------------------------------------------------------
+<?php get_stylesheet_directory(); ?>
+ 
+style.css file location
+---------------------------------------------------------
+<?php bloginfo('stylesheet_url'); ?>
+ 
+pingback url
+---------------------------------------------------------
+<?php 
+/**
+ * Add a pingback url auto-discovery header for single posts, pages, or attachments.
+ */
+function the_prothom_alo_pingback_header() {
+	if ( is_singular() && pings_open() ) {
+		echo '<link rel="pingback" href="', esc_url( get_bloginfo( 'pingback_url' ) ), '">';
+	}
+}
+add_action( 'wp_head', 'the_prothom_alo_pingback_header' );
+
+?>
+ 
+Template folder path
+---------------------------------------------------------
+<?php echo esc_url(get_template_directory_uri()); ?>
+ 
+wordpress site version
+---------------------------------------------------------
+<?php bloginfo('version'); ?>
+ 
+atom url
+---------------------------------------------------------
+<?php bloginfo('atom_url'); ?>
+ 
+rss2 url
+---------------------------------------------------------
+<?php bloginfo('rss2_url'); ?>
+Html version
+---------------------------------------------------------
+<?php bloginfo('html_type'); ?>
+ 
+charset parameter
+---------------------------------------------------------
+<?php bloginfo('charset'); ?>
+ 
+==========================================================
+Codes for Other Template Files
+Codes below will be seen across all template files such as
+single.php, index.php, page.php and so on. Its really easy
+to call on these codes to make your theme dynamic when coding it.
+==========================================================
+ 
+Displays Header.php file content
+---------------------------------------------------------
+<?php get_header(); ?>
+ 
+Displays Footer.php file content
+---------------------------------------------------------
+<?php get_footer(); ?>
+ 
+Displays Sidebar.php file content
+---------------------------------------------------------
+<?php get_sidebar(); ?>
+ 
+Displays Sidebar.php file content with if condition 
+---------------------------------------------------------
+<?php
+
+if (is_active_sidebar('sidebar-1')): ?>
+	<div id="primary-sidebar" class="primary-sidebar widget-area" role="complementary">
+		<?php
+	dynamic_sidebar('sidebar-1'); ?>
+	</div><!-- #primary-sidebar -->
+	<?php
+endif; ?>
+Displays Comment.php file content
+---------------------------------------------------------
+<?
+// If comments are open or we have at least one comment, load up the comment template.
+
+if ( comments_open() || get_comments_number() ) {
+	comments_template();
+}
+?>
+Displays the Content of the Post
+---------------------------------------------------------
+<?php the_content(); ?>
+ 
+Displays the excerpt that is used in Posts
+---------------------------------------------------------
+<?php echo esc_html(wp_trim_words(get_the_content() , 40, false)); ?>
+ 
+Title of the Specific Post
+---------------------------------------------------------
+<?php
+the_title(); ?>
+Link of the Specific Post
+---------------------------------------------------------
+<?php the_permalink() ?>
+ 
+Category of a Specific Post
+---------------------------------------------------------
+<?php
+$categories = get_the_category();
+$separator = ", ";
+$output = '';
+
+if ($categories)
+	{
+	foreach($categories as $category)
+		{
+		$output.= '<a href="' . get_category_link($category->term_id) . '">' . $category->cat_name . '</a>' . $separator;
+		}
+
+	echo trim($output, $separator);
+	}
+
+?>
+ 
+Author of the Specific Post
+---------------------------------------------------------
+<?php the_author(); ?>
+ 
+ID of a Specific Post
+---------------------------------------------------------
+<?php the_ID(); ?>
+ 
+Edit link for a Post
+---------------------------------------------------------
+<?php edit_post_link(); ?>
+ 
+URL of the Next Page
+---------------------------------------------------------
+<?php next_post_link(' %link ') ?>
+ 
+URL of the Previous Page
+---------------------------------------------------------
+<?php previous_post_link('%link') ?>
+ 
+Lists all links in Blogroll
+---------------------------------------------------------
+<?php get_links_list(); ?>
+ 
+Lists all Pages
+---------------------------------------------------------
+<?php wp_list_pages(); ?>
+ 
+List Archive for the Site
+---------------------------------------------------------
+<?php wp_get_archives() ?>
+ 
+Lists all Categories
+---------------------------------------------------------
+<?php wp_list_cats(); ?>
+ 
+Displays the Built in Calendar
+---------------------------------------------------------
+<?php get_calendar(); ?>
+ 
+Displays Register Link
+---------------------------------------------------------
+<?php wp_register(); ?>
+ 
+Displays Login/Logout Link only to Registered Users
+---------------------------------------------------------
+<?php wp_loginout(); ?>
+ 
+the date is ’02-15-14′
+---------------------------------------------------------
+<?php the_time('m-d-y'); ?>
+ 
+link to comments of post
+---------------------------------------------------------
+<?php comments_popup_link(); ?>
+ 
+edit link of post/page
+---------------------------------------------------------
+<?php edit_post_link(); ?>
+ 
+links from blogroll
+---------------------------------------------------------
+<?php wp_list_bookmarks(); ?>
+ 
+list all pages
+---------------------------------------------------------
+<?php wp_list_pages(); ?>
+ 
+list all categories
+---------------------------------------------------------
+<?php wp_list_categories(); ?>
+ 
+url to next post
+---------------------------------------------------------
+<?php next_post_link('%link'); ?>
+ 
+url to previous post
+---------------------------------------------------------
+<?php previous_post_list('%link'); ?>
+ 
+next and previous post link
+---------------------------------------------------------
+<?php posts_nav_link(); ?>
+ 
+rewinds post for a second loop
+---------------------------------------------------------
+<?php rewind_posts(); ?>
+ 
+admin meta data
+---------------------------------------------------------
+<?php wp_meta(); ?>
+ 
+ 
+==========================================================
+The Loop (Basic Loop)
+==========================================================
+<?php
+
+if (have_posts())
+	{ ?>
+<?php
+	while (have_posts())
+		{ ?>
+<?php
+		the_post(); ?>
+<?php // custom post content code for title, excerpt and featured image
+		 ?>
+<?php
+		} // end while
+	 ?>
+<?php
+	} // end if
+ ?>
+ 
+==========================================================
+The Loop (Advance Loop)
+==========================================================
+<?php
+
+if (have_posts()): ?>
+<?php
+	while (have_posts()):
+		the_post(); ?>
+<div class="post" id="post-<?php
+		the_ID(); ?>">
+<h2><a href="<?php
+		the_permalink() ?>" rel="bookmark" title="Permanent Link to
+<?php
+		the_title(); ?>"><?php
+		the_title(); ?></a></h2>
+<small><?php
+		the_time('F jS, Y') ?> <!-- by <?php
+		the_author() ?> --></small>
+<div class="entry">
+<?php
+		the_content('Read the rest of this entry »'); ?>
+</div>
+<p class="postmetadata">Posted in <?php
+		the_category(', ') ?> <strong>|</strong>
+<?php
+		edit_post_link('Edit', '', '<strong>|</strong>'); ?>
+<?php
+		comments_popup_link('No Comments »', '1 Comment »', '% Comments
+»'); ?>
+</p>
+</div>
+<?php
+	endwhile; ?>
+<div class="navigation">
+<div class="alignleft"><?php
+	next_posts_link('« Previous Entries') ?></div>
+<div class="alignright"><?php
+	previous_posts_link('Next Entries »') ?></div>
+</div>
+<?php
+else: ?>
+<h2 class="center">Not Found</h2>
+<p class="center">Sorry, but you are looking for something that isn't here.</p>
+<?php
+	include (TEMPLATEPATH . "/searchform.php");
+ ?>
+<?php
+endif; ?>
+ 
+==========================================================
+Navigation Menu
+Navigation Menu (Default)
+==========================================================
+	wp_nav_menu();
+
+Navigation Menu (Specific)
+---------------------------------------------------------
+<?php
+wp_nav_menu(array(
+	'menu' => 'Project Nav'
+)); ?>
+ 
+Navigation Menu (Category Based)
+---------------------------------------------------------
+<ul id="menu">
+<li <?php
+
+if (is_home())
+	{ ?> class="current-cat" <?php
+	} ?>>
+<a href="<?php
+bloginfo('home'); ?>">Home</a></li>
+<?php
+wp_list_categories('title_li=&orderby=id'); ?>
+</ul>
+ 
+Navigation Menu (Page Based)
+---------------------------------------------------------
+<ul id="menu">
+<li <?php
+
+if (is_home())
+	{ ?> class="current-page-item" <?php
+	} ?>>
+<a href="<?php
+bloginfo('home'); ?>">Home</a></li>
+<?php
+wp_list_pages('sort_column=menu_order&depth=1&title_li='); ?>
+</ul>
+ 
+Comments popup link
+---------------------------------------------------------
+<?php comments_popup_link('Leave a Comment', '1 Comment', '% Comments'); ?>
+ 
+ 
+if statemant for post find/search
+---------------------------------------------------------
+<?php
+
+if (have_posts()): ?>
+ 
+while statemant
+---------------------------------------------------------
+<?php
+	while (have_posts()):
+		the_post(); ?>
+ 
+End while statemant
+---------------------------------------------------------
+<?php
+	endwhile; ?>
+ 
+End if statemant
+---------------------------------------------------------
+<?php
+endif; ?>
+ 
+==========================================================
+Get Featured Image URL with Proper size Array
+==========================================================
+<?php $src = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID) , array(900,900) , false, '');
+
+// Outpot
+
+echo $src[0]; ?>
+ 
+ 
+Feature iamge query with direct hyperlink
+---------------------------------------------------------
+<?php $thumbnail_id = get_the_post_thumbnail($post->ID);
+preg_match('/src="(.*)" class/', $thumbnail_id, $link);
+echo $link[1];
+?>
+ 
+Feature iamge query with direct link for Lightbox
+---------------------------------------------------------
+<?php
+$thumbnail_id = get_the_post_thumbnail($post->ID);
+preg_match('/src="(.*)" class/', $thumbnail_id, $link);
+echo $link[1];
+?>
+<a href="<?php
+echo $link[1]; ?>" rel="lightbox"><?php
+the_post_thumbnail('thumbnail'); ?></a>
+ 
+==========================================================
+Display all Custom Texonomies list
+==========================================================
+<?php
+
+// list terms in a given taxonomy
+
+$taxonomy = 'recipe-cat';
+$tax_terms = get_terms($taxonomy);
+?>
+<ul class="fc_texonomy">
+<?php
+
+foreach($tax_terms as $tax_term)
+	{
+	echo '<li>' . '<a href="' . esc_attr(get_term_link($tax_term, $taxonomy)) . '" title="' . sprintf(__("View all posts in %s") , $tax_term->name) . '" ' . '>' . $tax_term->name . '</a></li>';
+	}
+
+?>
+</ul>
+ 
+==========================================================
+URL / permalink rewrite issue fix for (Recipe) Custom Post
+==========================================================
+<?
+add_action('init', 'firmasite_resimlitarif_cpt', 0);
+function firmasite_resimlitarif_cpt()
+{
+
+// Recipe Custom Post
+
+$args = array(
+'public' => true,
+'show_in_menu' => true,
+'permalink_epmask' => EP_NONE,
+'rewrite' => array('slug'=>'/','with_front'=>false),
+'has_archive' => false,
+'supports' => array('title','editor','thumbnail')
+);
+register_post_type('recipe',$args);
+}
+add_action("parse_query", 'firmasite_resimlitarif_parse_query');
+function firmasite_resimlitarif_parse_query($query) {
+global $wp, $wp_rewrite;
+
+// Is this query for /%post_name%/? Is it main request query?
+
+if (isset($query->query['name'])
+&& substr($wp->matched_rule, 0, 7) == "([^/]+)"
+&& isset($query->query)
+&& isset($wp->query_vars)
+&& $query->query == $wp->query_vars)
+{
+if (!($post_types = get_query_var("post_type"))) {
+if ($wp_rewrite->permalink_structure == "/%postname%/")
+$post_types = array("post");
+  else
+$post_types = array();
+}
+if (is_array($post_types)){
+$post_types[] = 'recipe';
+$post_types[] = 'page';
+}
+set_query_var("post_type", $post_types);
+}
+}
+?>
+==========================================================
+Add metabox, save data in post, page, post-type
+==========================================================
+
+// Little function to return a custom field value
+<?php 
+function wpshed_get_custom_field( $value ) {
+global $post;
+$custom_field = get_post_meta( $post->ID, $value, true );
+if ( !empty( $custom_field ) )
+return is_array( $custom_field ) ? stripslashes_deep(
+$custom_field ) : stripslashes( wp_kses_decode_entities( $custom_field ) );
+return false;
+}
+?>
+==========================================================
+Add the Metabox
+==========================================================
+<?php 
+function wpshed_add_custom_meta_box() {
+add_meta_box( 'wpshed-meta-box', __( 'Metabox Example', 'textdomain' ), 'wpshed_meta_box_output', 'post', 'normal', 'high' );
+add_meta_box( 'wpshed-meta-box', __( 'Metabox Example', 'textdomain' ), 'wpshed_meta_box_output', 'page', 'normal', 'high' );
+add_meta_box( 'wpshed-meta-box', __( 'Metabox Example', 'textdomain' ), 'wpshed_meta_box_output', 'post_type_name', 'normal', 'high' ); //show in custom post
+}
+add_action( 'add_meta_boxes', 'wpshed_add_custom_meta_box' );
+
+// Output the Metabox
+
+function wpshed_meta_box_output( $post ) {
+
+// create a nonce field
+
+wp_nonce_field( 'my_wpshed_meta_box_nonce', 'wpshed_meta_box_nonce' ); ?>
+<p>
+<label for="wpshed_textfield"><?php
+_e('Textfield', 'textdomain'); ?>:</label>
+<input type="text" name="wpshed_textfield" id="wpshed_textfield" value="<?php
+echo wpshed_get_custom_field('wpshed_textfield'); ?>" size="50" />
+</p>
+<p>
+<label for="wpshed_textarea"><?php
+_e('Textarea', 'textdomain'); ?>:</label><br />
+<textarea name="wpshed_textarea" id="wpshed_textarea" cols="60" rows="4"><?php
+echo wpshed_get_custom_field('wpshed_textarea'); ?></textarea>
+</p>
+<?php
+}
+
+// Save the Metabox values
+
+function wpshed_meta_box_save($post_id)
+	{
+
+	// Stop the script when doing autosave
+
+	if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+
+	// Verify the nonce. If insn't there, stop the script
+
+	if (!isset($_POST['wpshed_meta_box_nonce']) || !wp_verify_nonce($_POST['wpshed_meta_box_nonce'], 'my_wpshed_meta_box_nonce')) return;
+
+	// Stop the script if the user does not have edit permissions
+
+	if (!current_user_can('edit_post')) return;
+
+	// Save the textfield
+
+	if (isset($_POST['wpshed_textfield'])) update_post_meta($post_id, 'wpshed_textfield', esc_attr($_POST['wpshed_textfield']));
+
+	// Save the textarea
+
+	if (isset($_POST['wpshed_textarea'])) update_post_meta($post_id, 'wpshed_textarea', esc_attr($_POST['wpshed_textarea']));
+	}
+
+add_action('save_post', 'wpshed_meta_box_save'); === === === === === === === === === === === === === === === === === === === = ConditionalMetaboxdatareturns(Example) === === === === === === === === === === === === === === === === === === === = < ? phpglobal $post;
+$a = get_post_meta($post->ID, 'pricing_class', true);
+
+if ($a)
+	{
+	echo $a;
+	}
+
+?>
+ 
+==========================================================
+Query Recent 10 Post title From a Category
+==========================================================
+<?php
+
+// display 10 posts for category id 47
+
+$args = array(
+	'cat' => 1,
+	'post_type' => 'post',
+	'post_status' => 'publish',
+	'posts_per_page' => 10,
+	'caller_get_posts' => 1
+);
+$my_query = null;
+$my_query = new WP_Query($args);
+
+if ($my_query->have_posts())
+	{
+	echo 'List of Posts';
+	while ($my_query->have_posts()) : $my_query->the_post(); ?>
+<p><a href="<?php
+	the_permalink() ?>" rel="bookmark" title="Permanent Link to <?php
+	the_title_attribute(); ?>"><?php
+	the_title(); ?></a></p>
+<?php
+endwhile;
+}
+
+wp_reset_query(); // Restore global post data stomped by the_post().
+
+?>
+ 
+==========================================================
+Add Menu Support in Theme
+==========================================================
+<?php 
+function register_my_menus() {
+	register_nav_menus( array(
+	'primary' => __( 'Primary Navigation', 'portfolium' ),
+	) );
+}
+?>
+Show Menu In wordpress Header
+----------------------------------------------------------
+<?php
+wp_nav_menu(array(
+	'container_class' => 'menu-header',
+	'theme_location' => 'primary'
+)); ?>	
+ 
+ADD icon in menu Li
+----------------------------------------------------------
+<?php
+
+if (function_exists('wp_nav_menu'))
+	{
+	wp_nav_menu(array(
+		'theme_location' => 'wpj-main-menu',
+		'menu_class' => 'nav navbar-nav',
+		'link_before' => '<i class="glyphicon-plus">&nbsp;</i>',
+		'link_after' => '<i class="glyphicon-plus">&nbsp;</i>',
+		'fallback_cb' => 'wpj_default_menu'
+	));
+	}
+  else
+	{
+	wpj_default_menu();
+	}
+
+?>
+ 
+ 
+==========================================================
+Register sidebars and widget areas
+==========================================================
+<?php 
+function fctheme_widget_areas() {
+register_sidebar( array(
+'name' => __( 'About Us Page Content', 'freelancingcare' ),
+'id' => 'about_us_text',
+'before_widget' => '<div class="contact_map floatleft">',
+'after_widget' => '</div>',
+'before_title' => '<h3>',
+'after_title' => '</h3>',
+) );
+}
+add_action('widgets_init', 'fctheme_widget_areas');
+ ?>
+Use Widget Code in Template Page
+----------------------------------------------------------
+<?php
+
+if (!function_exists('dynamic_sidebar') || !dynamic_sidebar(about_us_text)): ?>
+<div class="fc_class">
+
+// Write your default data
+
+</div>
+<?php
+endif; ?>
+ 
+==========================================================
+Get author list in particular post category sort by post count
+==========================================================
+<?php
+$catauthors = array();
+$my_cat_id = 5; // Your category ID
+$allposts = get_posts("cat=$my_cat_id&showposts=-1");
+
+if ($allposts)
+	{
+	foreach($allposts as $authorpost)
+		{
+		$catauthors[$authorpost->post_author]+= 1; // Authors Post Limit
+		}
+
+	arsort($catauthors); //sort array in reverse order by number of posts
+	foreach($catauthors as $key => $author_post_count)
+		{
+		$curuser = get_userdata($key);
+		$author_post_url = get_author_posts_url($curuser->ID, $curuser->nicename);
+		echo '<p>--User nicename: ' . $curuser->user_nicename . ', display name: ' . $curuser->display_name . ', number of posts in category ' . $my_cat_id . ': ' . $author_post_count . ', link to all posts by this author: <a href="' . $author_post_url . '" title="' . sprintf(__("Posts by %s") , $curuser->user_nicename) . '" ' . '>' . $curuser->user_nicename . '</a></p>';
+		}
+	}
+
+?>
+ 
+Another Easy code for author list
+----------------------------------------------------------
+<?php wp_list_authors('show_fullname=1&optioncount=1&orderby=post_count&order=DESC&number=3'); ?>
+ 
+ 
+==========================================================
+Count all the post for a category
+==========================================================
+<?php
+$counter = "SELECT COUNT(*)
+FROM $wpdb->posts
+LEFT JOIN $wpdb->term_relationships ON($wpdb->posts.ID = $wpdb->term_relationships.object_id)
+LEFT JOIN $wpdb->term_taxonomy ON($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id)
+WHERE $wpdb->term_taxonomy.term_id = 5
+AND $wpdb->term_taxonomy.taxonomy = 'category'
+AND $wpdb->posts.post_status = 'publish'
+AND post_author = '1'
+";
+$user_count = $wpdb->get_var($counter);
+echo $user_count;
+?>
+ 
+ 
+==========================================================
+Conditional Text for Logged user and guest in wordpres
+==========================================================
+<?php
+
+if (!is_user_logged_in())
+	{
+	echo 'Guest Data';
+	}
+  else
+	{
+	echo 'Member data';
+	}
+
+?>
+ 
+ 
+==========================================================
+Activate ReduxFramework Admin Panel
+==========================================================
+
+// Include the Redux theme options Framework
+<?php 
+if ( !class_exists( 'ReduxFramework' ) ) {
+require_once( dirname( __FILE__ ) . '/ReduxCore/framework.php' );
+}
+
+// Tweak the Redux framework, Register all the theme options, Registers the wpex_option function
+
+if ( !isset( $redux_demo ) ) {
+require_once( dirname( __FILE__ ) . '/functions/admin-config.php' );
+}
+?>
+==========================================================
+wordpres endforeach Loop
+==========================================================
+<?php
+global $post;
+$args = array(
+	'posts_per_page' => 5,
+	'post_type' => 'slider',
+	'order' => 'ASC'
+);
+$myposts = get_posts($args);
+
+foreach($myposts as $post):
+	setup_postdata($post);
+?>
+<?php
+	the_excerpt(); ?>
+<?php
+endforeach; ?>
+
+==========================================================
+Custom post query with custom field wordpress.
+==========================================================
+<?php
+global $post;
+$args = array(
+	'posts_per_page' => 10,
+	'post_type' => 'custom-post-type'
+);
+$myposts = get_posts($args);
+
+foreach($myposts as $post):
+	setup_postdata($post); ?>
+<?php
+	$job_link = get_post_meta($post->ID, 'job_instructions', true);
+?>
+ <?php
+	echo $job_link; ?>
+<?php
+endforeach; ?> 
+
+/*-----------------------------------------------------------------------------------*/
+# Visitor Post View Count
+/*-----------------------------------------------------------------------------------*/
+<?php 
+function the_prothom_alo_post_views($post_ID) {
+
+    // Set the name of the Posts Custom Field.
+
+    $count_key = 'post_views_count';
+
+
+    // Returns values of the custom field with the specified key from the specified post.
+
+    $count = get_post_meta($post_ID, $count_key, true);
+
+
+    // If the the Post Custom Field value is empty.
+
+    if($count == ''){
+        $count = 0; // set the counter to zero.
+
+
+        // Delete all custom fields with the specified key from the specified post.
+
+        delete_post_meta($post_ID, $count_key);
+
+
+        // Add a custom (meta) field (Name/value)to the specified post.
+
+        add_post_meta($post_ID, $count_key, '0');
+        return $count . '';
+
+
+        // If the the Post Custom Field value is NOT empty.
+
+    }else{
+        $count++; //increment the counter by 1.
+
+        // Update the value of an existing meta key (custom field) for the specified post.
+
+        update_post_meta($post_ID, $count_key, $count);
+
+
+        // If statement, is just to have the singular form 'View' for the value '1'
+
+        if($count == '1'){
+            return $count . '';
+        }
+
+        // In all other cases return (count) Views
+
+          else {
+            return $count . '';
+        }
+    }
+}
+add_action( 'init', 'the_prothom_alo_PostViews' );
+?>
+
+OutPot
+---------------------------------------------------------
+<?php echo esc_html(the_prothom_alo_post_views(get_the_ID())); ?>
+
+Do Shortcodes inside widgets
+---------------------------------------------------------
+<?php add_filter('widget_text', 'do_shortcode'); ?>
+
+Author Details View
+---------------------------------------------------------
+<?php 
+$author = get_the_author();
+$author_description = get_the_author_meta('description');
+$author_url = esc_url(get_author_posts_url(get_the_author_meta('ID')));
+$author_avatar = get_avatar(get_the_author_meta('user_email') , apply_filters('wpex_author_bio_avatar_size', 75));
+
+// Only display if author has a description
+
+if ($author_description): ?>
+
+    <div class="author-info clr">
+        <h4 class="heading"><span><?php
+	printf(esc_html__('Written by %s', 'text_domain') , esc_html($author)); ?></span></h4>
+        <div class="author-info-inner clr">
+            <?php
+	if ($author_avatar)
+		{ ?>
+                <div class="author-avatar clr">
+                    <a href="<?php
+		echo esc_url($author_url); ?>" rel="author">
+                        <?php
+		echo $author_avatar; ?>
+                    </a>
+                </div><!-- .author-avatar -->
+            <?php
+		} ?>
+            <div class="author-description">
+                <p><?php
+	echo wp_kses_post($author_description); ?></p>
+                <p><a href="<?php
+	echo esc_url($author_url); ?>" title="<?php
+	esc_html_e('View all author posts', 'text_domain'); ?>"><?php
+	esc_html_e('View all author posts', 'text_domain'); ?> →</a></p>
+            </div><!-- .author-description -->
+        </div><!-- .author-info-inner -->
+    </div><!-- .author-info -->
+
+<?php
+endif; ?>
+ 
+Bootstrap Carousel WP
+---------------------------------------------------------
+ <!-- Carousel items -->
+    <div class="carousel-inner">
+    <?php
+$slider = new WP_Query(array(
+	'post_type' => 'slider',
+	'posts_per_page' => 1,
+)); ?>
+    <?php
+
+if (have_posts())
+	{
+	$x = 0;
+	while ($slider->have_posts())
+		{
+		$x++;
+		$slider->the_post(); ?>
+                <div class="<?php
+		if ($x == 1)
+			{
+			echo 'active'
+			} ?> item">
+                    <?php
+		if (has_post_thumbnail()): ?>
+                        <a href="<?php
+			the_permalink(); ?>" title="<?php
+			the_title_attribute(); ?>">
+                            <?php
+			the_post_thumbnail(); ?>
+                        </a>
+                    <?php
+		endif; ?>
+                </div>
+        <?php
+		} // end while
+	} // end if
+
+?>
+
+
+    </div>
+    <!-- Carousel nav -->
+
+     <ol class="carousel-indicators">
+        <?php
+
+for ($i = 0; $i < $x; $i++;)
+	{ ?>
+            <li data-target="#carousel" data-slide-to="<?php
+	echo $i; ?>" class="<?php
+	if ($i == 0)
+		{
+		echo 'active'
+		} ?>"></li>
+        <?php
+	} ?>
+    </ol>
+
+    <a class="carousel-control left" href="#carousel" data-slide="prev">&lsaquo;</a>
+    <a class="carousel-control right" href="#carousel" data-slide="next">&rsaquo;</a>
+</div>
+WP Category Custom Style 
+---------------------------------------------------------
+<?php 
+$categories = get_the_category();
+$separator = ", ";
+$output = '';
+
+if ($categories)
+	{
+	foreach($categories as $category)
+		{
+		$output.= '<a href="' . get_category_link($category->term_id) . '">' . $category->cat_name . '</a>' . $separator;
+		}
+
+	echo trim($output, $separator);
+	}
+
+?>
+To link Post Thumbnails to the Post Permalink in a specific loop, use the following within your Theme’s template files:
+---------------------------------------------------------
+<?php
+
+if (has_post_thumbnail()): ?>
+    <a href="<?php
+	the_permalink(); ?>" title="<?php
+	the_title_attribute(); ?>">
+        <?php
+	the_post_thumbnail(); ?>
+    </a>
+<?php
+endif; ?>
+Custom Favicon
+---------------------------------------------------------
+<?php 
+function the_prothom_alo_favicon() {
+	$default_favicon = get_template_directory_uri()."/favicon.ico";
+	$custom_favicon = tie_get_option('favicon');
+	$favicon = (empty($custom_favicon)) ? $default_favicon : $custom_favicon;
+	echo '<link rel="shortcut icon" href="'.$favicon.'" title="Favicon" />';
+}
+add_action('wp_head', 'the_prothom_alo_favicon');
+?>
+WP Tags Custom Style 
+---------------------------------------------------------
+<ul id="tags-list">
+<?php
+$tags = get_tags(array(
+	'orderby' => 'count',
+	'order' => 'DESC',
+	'number' => 20
+));
+
+foreach((array)$tags as $tag)
+	{
+	echo '<li><a href="' . get_tag_link($tag->term_id) . '" rel="tag">' . $tag->name . ' <span>(' . $tag->count . ')</span> </a></li>';
+	}
+
+?>
+</li>
+</ul>
+Adding the WooCommerce plugin support 
+---------------------------------------------------------
+<?php 
+add_theme_support('woocommerce');
+add_theme_support('wc-product-gallery-zoom');
+add_theme_support('wc-product-gallery-lightbox');
+add_theme_support('wc-product-gallery-slider');
+?>
+ 
+Add class on categories widget for post counter styling
+---------------------------------------------------------
+<?php 
+function rm_categories_post_count_filter ($cat_post_count) {
+    $cat_post_count = str_replace('(', '<span class="post_count pull-right"> (', $cat_post_count);
+    $cat_post_count = str_replace(')', ' )</span>', $cat_post_count);
+    return $cat_post_count;
+}
+add_filter('wp_list_categories','rm_categories_post_count_filter');
+?>
+How to show top selling items on EDD
+---------------------------------------------------------
+ <?php 
+	$popular_items = new WP_Query (array(
+	'post_type' => 'download',
+	'orderby' => 'meta_value_num',
+	'meta_query' => array(
+	'relation' => 'AND',
+	array(
+	'key' => '_edd_download_sales',
+	'compare' => '>',
+	'value' => 0,
+	'order' => 'DESC',
+	),
+	),
+	'posts_per_page' => 3
+	));
+?>
+ 
+How to limit letter of WordPress post title
+---------------------------------------------------------
+ 
+<?php
+
+if (strlen($post->post_title) > 35)
+	{
+	echo substr(the_title($before = '', $after = '', FALSE) , 0, 35) . '...';
+	}
+  else
+	{
+	the_title();
+	} ?>
+ 
+Add custom field to WooCommerce product category
+---------------------------------------------------------
+
+ 
+// Add term page
+<?php 
+function custom_url_taxonomy_add_new_meta_field() {
+
+// this will add the custom meta field to the add new term page
+
+?>
+<div class="form-field">
+<label for="term_meta[custom_term_meta]"><?php
+_e('Custom url category', 'custom_url_category'); ?></label>
+<input type="text" name="term_meta[custom_term_meta]" id="term_meta[custom_term_meta]" value="">
+<p class="description"><?php
+_e('Inserisci un custom url prodotto per la categoria', 'custom_url_category'); ?></p>
+</div>
+<?php
+}
+
+add_action('product_cat_add_form_fields', 'custom_url_taxonomy_add_new_meta_field', 10, 2);
+
+// Edit term page
+
+function custom_url_taxonomy_edit_meta_field($term)
+	{
+
+	// put the term ID into a variable
+
+	$t_id = $term->term_id;
+
+	// retrieve the existing value(s) for this meta field. This returns an array
+
+	$term_meta = get_option("taxonomy_$t_id"); ?>
+<tr class="form-field">
+<th scope="row" valign="top"><label for="term_meta[custom_term_meta]"><?php
+	_e('Custom url category', 'custom_url_category'); ?></label></th>
+<td>
+<input type="text" name="term_meta[custom_term_meta]" id="term_meta[custom_term_meta]" value="<?php
+	echo esc_attr($term_meta['custom_term_meta']) ? esc_attr($term_meta['custom_term_meta']) : ''; ?>">
+<p class="description"><?php
+	_e('Inserisci un custom url prodotto per la categoria', 'custom_url_category'); ?></p>
+</td>
+</tr>
+<?php
+	}
+
+add_action('product_cat_edit_form_fields', 'custom_url_taxonomy_edit_meta_field', 10, 2);
+
+// Save extra taxonomy fields callback function.
+
+function save_taxonomy_custom_meta($term_id)
+	{
+	if (isset($_POST['term_meta']))
+		{
+		$t_id = $term_id;
+		$term_meta = get_option("taxonomy_$t_id");
+		$cat_keys = array_keys($_POST['term_meta']);
+		foreach($cat_keys as $key)
+			{
+			if (isset($_POST['term_meta'][$key]))
+				{
+				$term_meta[$key] = $_POST['term_meta'][$key];
+				}
+			}
+
+		// Save the option array.
+
+		update_option("taxonomy_$t_id", $term_meta);
+		}
+	}
+
+add_action('edited_product_cat', 'save_taxonomy_custom_meta', 10, 2);
+add_action('create_product_cat', 'save_taxonomy_custom_meta', 10, 2);
+?>
+If you show registration date in Single post, Use this code in single.php  
+---------------------------------------------------------
+
+<?php global $wp_query;
+$registered = date_i18n("M m, Y", strtotime(get_the_author_meta('user_registered', $wp_query->queried_object_id)));
+echo 'Member since ' . $registered;
+?>
+If you show registration date in Single post, Use this code in single.php 
+---------------------------------------------------------
+ 
+<?php
+$user_ID = $post->post_author;
+$registered = date_i18n("M m, Y", strtotime(get_the_author_meta('user_registered', $user_ID)));
+echo 'Member since ' . $registered;
+?>
+ 
+How to Enqueue Google Fonts on WordPress Theme
+---------------------------------------------------------
+ <?php 
+/**
+* Register custom fonts.
+*/
+function themeslug_fonts_url() {
+$fonts_url = '';
+$fonts = array();
+$subsets = 'latin,latin-ext';
+/*
+	 * Translators: If there are characters in your language that are not supported
+	 * by Oswald, translate this to 'off'. Do not translate into your own language.
+	 */
+if ( 'off' !== _x( 'on', 'Oswald font: on or off', 'themeslug' ) ) {
+$fonts[] = 'Oswald:400,700';
+}
+/*
+	 * Translators: If there are characters in your language that are not supported
+	 * by Montserrat, translate this to 'off'. Do not translate into your own language.
+	 */
+if ( 'off' !== _x( 'on', 'Montserrat font: on or off', 'themeslug' ) ) {
+$fonts[] = 'Montserrat:400,700';
+}
+if ( $fonts ) {
+$fonts_url = add_query_arg( array(
+'family' => urlencode( implode( '|', $fonts ) ),
+'subset' => urlencode( $subsets ),
+), 'https://fonts.googleapis.com/css' );
+}
+return esc_url_raw( $fonts_url );
+}
+
+ Enqueue scripts and styles 
+ 
+/**
+* Enqueue scripts and styles.
+*/
+function themeslug_scripts() {
+
+// Add custom fonts, used in the main stylesheet.
+
+wp_enqueue_style( 'themeslug-fonts', themeslug_fonts_url(), array(), null );
+}
+add_action( 'wp_enqueue_scripts', 'themeslug_scripts' );
+
+?>
+ 
+Remove WordPress Version Number
+---------------------------------------------------------
+function wpb_remove_version() {
+return '';
+}
+add_filter('the_generator', 'wpb_remove_version');
+ 
+Add a Custom Dashboard Logo
+---------------------------------------------------------
+function wpb_custom_logo() {
+echo '
+<style type="text/css">
+#wpadminbar #wp-admin-bar-wp-logo > .ab-item .ab-icon:before {
+background-image: url(' . get_bloginfo('stylesheet_directory') . '/images/custom-logo.png) !important;
+background-position: 0 0;
+color:rgba(0, 0, 0, 0);
+}
+#wpadminbar #wp-admin-bar-wp-logo.hover > .ab-item .ab-icon {
+background-position: 0 0;
+}
+</style>
+';
+}
+//hook into the administrative header output
+add_action('wp_before_admin_bar_render', 'wpb_custom_logo');
+ 
+Change the Footer in WordPress Admin Panel
+---------------------------------------------------------
+function remove_footer_admin () {
+ 
+echo 'Fueled by <a href="http://www.wordpress.org" target="_blank">WordPress</a> | WordPress Tutorials: <a href="https://www.wpbeginner.com" target="_blank">WPBeginner</a></p>';
+ 
+}
+ 
+add_filter('admin_footer_text', 'remove_footer_admin');
+ 
+Change the Default Gravatar in WordPress
+---------------------------------------------------------
+add_filter( 'avatar_defaults', 'wpb_new_gravatar' );
+function wpb_new_gravatar ($avatar_defaults) {
+$myavatar = 'http://example.com/wp-content/uploads/2017/01/wpb-default-gravatar.png';
+$avatar_defaults[$myavatar] = "Default Gravatar";
+return $avatar_defaults;
+}
+ 
+Dynamic Copyright Date in WordPress Footer
+---------------------------------------------------------
+ 
+function wpb_copyright() {
+global $wpdb;
+$copyright_dates = $wpdb->get_results("
+SELECT
+YEAR(min(post_date_gmt)) AS firstdate,
+YEAR(max(post_date_gmt)) AS lastdate
+FROM
+$wpdb->posts
+WHERE
+post_status = 'publish'
+");
+$output = '';
+if($copyright_dates) {
+$copyright = "© " . $copyright_dates[0]->firstdate;
+if($copyright_dates[0]->firstdate != $copyright_dates[0]->lastdate) {
+$copyright .= '-' . $copyright_dates[0]->lastdate;
+}
+$output = $copyright;
+}
+return $output;
+}
+ 
+Add Author Profile Fields
+---------------------------------------------------------
+function wpb_new_contactmethods( $contactmethods ) {
+// Add Twitter
+$contactmethods['twitter'] = 'Twitter';
+//add Facebook
+$contactmethods['facebook'] = 'Facebook';
+ 
+return $contactmethods;
+}
+add_filter('user_contactmethods','wpb_new_contactmethods',10,1);
+ 
+Show Total Number of Registered Users in WordPress
+--------------------------------------------------------
+// Function to return user count
+function wpb_user_count() { 
+$usercount = count_users();
+$result = $usercount['total_users']; 
+return $result; 
+} 
+// Creating a shortcode to display user count
+add_shortcode('user_count', 'wpb_user_count');
+ 
+Add an Author Info Box in WordPress Posts
+---------------------------------------------------------
+function wpb_author_info_box( $content ) {
+ 
+global $post;
+ 
+// Detect if it is a single post with a post author
+if ( is_single() && isset( $post->post_author ) ) {
+ 
+// Get author's display name 
+$display_name = get_the_author_meta( 'display_name', $post->post_author );
+ 
+// If display name is not available then use nickname as display name
+if ( empty( $display_name ) )
+$display_name = get_the_author_meta( 'nickname', $post->post_author );
+ 
+// Get author's biographical information or description
+$user_description = get_the_author_meta( 'user_description', $post->post_author );
+ 
+// Get author's website URL 
+$user_website = get_the_author_meta('url', $post->post_author);
+ 
+// Get link to the author archive page
+$user_posts = get_author_posts_url( get_the_author_meta( 'ID' , $post->post_author));
+  
+if ( ! empty( $display_name ) )
+ 
+$author_details = '<p class="author_name">About ' . $display_name . '</p>';
+ 
+if ( ! empty( $user_description ) )
+// Author avatar and bio
+ 
+$author_details .= '<p class="author_details">' . get_avatar( get_the_author_meta('user_email') , 90 ) . nl2br( $user_description ). '</p>';
+ 
+$author_details .= '<p class="author_links"><a href="'. $user_posts .'">View all posts by ' . $display_name . '</a>'; 
+ 
+// Check if author has a website in their profile
+if ( ! empty( $user_website ) ) {
+ 
+// Display author website link
+$author_details .= ' | <a href="' . $user_website .'" target="_blank" rel="nofollow">Website</a></p>';
+ 
+} else { 
+// if there is no author website then just close the paragraph
+$author_details .= '</p>';
+}
+ 
+// Pass all this info to post content 
+$content = $content . '<footer class="author_bio_section" >' . $author_details . '</footer>';
+}
+return $content;
+}
+ 
+// Add our function to the post content filter 
+add_action( 'the_content', 'wpb_author_info_box' );
+ 
+// Allow HTML in author bio section 
+remove_filter('pre_user_description', 'wp_filter_kses');
+// style css
+ 
+.author_bio_section{
+background: none repeat scroll 0 0 #F5F5F5;
+padding: 15px;
+border: 1px solid #ccc;
+}
+ 
+.author_name{
+font-size:16px;
+font-weight: bold;
+}
+ 
+.author_details img {
+border: 1px solid #D8D8D8;
+border-radius: 50%;
+float: left;
+margin: 0 10px 10px 0;
+Automatically Link Featured Images to Posts
+---------------------------------------------------------
+function wpb_autolink_featured_images( $html, $post_id, $post_image_id ) {
+ 
+If (! is_singular()) { 
+  
+$html = '<a href="' . get_permalink( $post_id ) . '" title="' . esc_attr( get_the_title( $post_id ) ) . '">' . $html . '</a>';
+return $html;
+ 
+} else { 
+ 
+return $html;
+ 
+}
+ 
+}
+add_filter( 'post_thumbnail_html', 'wpb_autolink_featured_images', 10, 3 );
